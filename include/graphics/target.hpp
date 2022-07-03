@@ -8,6 +8,7 @@ class Target : public sf::Drawable
   public:
     Target() = default;
     void setup(Vec2f pos, sf::Color color);
+    const Vec2f& get_pos() const;
   private:
     const float m_radius = 10.0f;
     Vec2f m_pos;

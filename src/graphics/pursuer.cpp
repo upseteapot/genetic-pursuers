@@ -16,6 +16,11 @@ void Pursuer::setup(Vec2f start_pos, sf::Color color, float cooldown)
   m_cooldown = cooldown;
 }
 
+void Pursuer::set_color(sf::Color color)
+{
+  m_shape.setFillColor(color);
+}
+
 void Pursuer::update(float dt, Genome &genome)
 {
   if ((m_counter += dt) >= m_cooldown) {
@@ -37,6 +42,11 @@ void Pursuer::reset()
   m_vel = Vec2f(0.0f, 0.0f);
   m_shape.setPosition(vec2_sfml(m_pos));
   m_shape.setRotation(90);
+}
+
+const Vec2f& Pursuer::get_pos() const
+{
+  return m_pos;
 }
 
 void Pursuer::draw(sf::RenderTarget &target, sf::RenderStates states) const

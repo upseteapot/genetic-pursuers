@@ -9,8 +9,10 @@ class Pursuer : public sf::Drawable
   public:
     Pursuer() = default;
     void setup(Vec2f start_pos, sf::Color color, float cooldown);
+    void set_color(sf::Color color);
     void update(float dt, Genome &genome);
     void reset();
+    const Vec2f& get_pos() const;
   private:
     float m_cooldown;
     float m_counter = 0.0f;

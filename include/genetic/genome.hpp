@@ -8,10 +8,21 @@ class Genome
 {
   public:
     float evaluation = 0;
+    bool previous_best = false;
+
     Genome() = default;
+    void reset();
     void setup(std::size_t size);
     void randomize(float magnitude);
-    Vec2f next();
+    void set(std::size_t index, const Vec2f &gene);
+
+    std::size_t get_size() const;
+    Vec2f get(std::size_t index) const;
+    Vec2f next(); 
+   
+    static Genome cross_over(const Genome &a, const Genome &b);
+    void mutate(float magnitude, float probability);
+  
   private:
     std::size_t m_index = 0;
     std::size_t m_size;

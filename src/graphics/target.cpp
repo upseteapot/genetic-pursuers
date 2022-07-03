@@ -11,6 +11,11 @@ void Target::setup(Vec2f pos, sf::Color color)
   m_shape.setFillColor(color);
 }
 
+const Vec2f& Target::get_pos() const 
+{
+  return m_pos;
+}
+
 void Target::draw(sf::RenderTarget &target, sf::RenderStates states) const
 {
   target.draw(m_shape, states);

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __PROB_ARRAY_DECLARATION
+#define __PROB_ARRAY_DECLARATION
 #include <iostream>
 #include <random>
 #include <memory>
@@ -19,9 +20,13 @@ class ProbArray
     T *m_data;
 };
 
+#endif
 
-#ifdef PROB_ARRAY_IMPLEMENTATION
-#undef PROB_ARRAY_IMPLEMENTATION
+
+#ifdef  PROB_ARRAY_IMPLEMENTATION
+#undef  PROB_ARRAY_IMPLEMENTATION
+#ifndef __PROB_ARRAY_DEFINITION
+#define __PROB_ARRAY_DEFINITION
 
 template <typename T>
 ProbArray<T>::~ProbArray()
@@ -49,7 +54,7 @@ void ProbArray<T>::push(const T &element, std::size_t frequency)
     m_frequencies[m_index] = m_total;
     m_index++;
   } else {
-    std::cout << "ERROR: Array has already reached its full capacity." << std::endl;
+    std::cout << "[ProbArray][ERROR] Array has already reached its full capacity." << std::endl;
   }
 }
 
@@ -61,9 +66,10 @@ const T& ProbArray<T>::get_random()
     if (random_index <= m_frequencies[i])
       return m_data[i];
   }
-  std::cout << "ERROR: Random index could not be mached to any frequecy, returning the last element." << std::endl;
+  std::cout << "[ProbArray][ERROR] Random index could not be mached to any frequecy, returning the last element." << std::endl;
   return m_data[m_size - 1];
 }
 
+#endif
 #endif
 
