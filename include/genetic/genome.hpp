@@ -7,6 +7,7 @@
 class Genome
 {
   public:
+    float evaluation = 0;
     Genome() = default;
     void setup(std::size_t size);
     void randomize(float magnitude);

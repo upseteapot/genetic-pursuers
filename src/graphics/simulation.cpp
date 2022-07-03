@@ -4,11 +4,11 @@
 void Simulation::setup()
 {
   m_target.setup(Vec2f(0.0f, 400.0f), sf::Color::Red);
-  
-  m_genome.setup((m_simulation_time - 1) / m_pursuer_cooldown);
-  m_genome.randomize(50.0f);
 
   m_pursuer.setup(Vec2f(0.0f, -400.0f), sf::Color::Green, m_pursuer_cooldown);
+  m_genome.setup((m_simulation_time - 1) / m_pursuer_cooldown);
+  m_genome.randomize(50.0f);
+  
   m_pursuer.reset();
 }
 
