@@ -27,32 +27,32 @@ Genome& Selector::get_genome(std::size_t index)
 
 void Selector::evaluate()
 {
-  ProbArray<Genome> pool;
+  ProbArray<std::size_t> pool;
   pool.create(m_size);
   
   // Get maximum genome evaluation.
   float max_evaluation = 0.0f; 
-  Genome best_genome;
+  std::size_t best_genome;
   for (std::size_t i=0; i < m_size; i++)
     if (m_genomes[i].evaluation > max_evaluation) {
       max_evaluation = m_genomes[i].evaluation;
-      best_genome = m_genomes[i];
+      best_genome = i;
     }
   
   // Push genomes to pool.
   for (std::size_t i=0; i < m_size; i++) {
     std::size_t frequency = std::round(100 * (m_genomes[i].evaluation / max_evaluation));
-    pool.push(m_genomes[i], frequency);
+    pool.push(i, frequency);
   }
   
   // Preserve best genome from previous iteration
-  best_genome.reset();
-  best_genome.previous_best = true;  
-  m_genomes[0] = best_genome;
+  m_genomes[best_genome].reset();
+  m_genomes[best_genome].previous_best = true;  
+  m_genomes[0] = m_genomes[best_genome];
 
   // Create new genomes by crossing over their genes and mutating them.
   for (std::size_t i=1; i < m_size; i++) {
-    m_genomes[i] = Genome::cross_over(pool.get_random(), pool.get_random());
+    m_genomes[i] = Genome::cross_over(m_genomes[pool.get_random()], m_genomes[pool.get_random()]);
     m_genomes[i].mutate(0.2f, 1.0f);
   }
 }
