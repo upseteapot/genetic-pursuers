@@ -72,8 +72,9 @@ void Genome::mutate(float magnitude, float probability)
   for (std::size_t i=0; i < m_size; i++) { 
     float random_number = (float)rand() / RAND_MAX;
     if (random_number <= probability) {
-      float delta = magnitude * rand() / RAND_MAX;
-      set(i, get(i) + delta);
+      float delta_x = magnitude * ((2.f * rand() / RAND_MAX) - 1.f);
+      float delta_y = magnitude * ((2.f * rand() / RAND_MAX) - 1.f);
+      set(i, get(i) + Vec2f(delta_x, delta_y));
     }
   }
 }

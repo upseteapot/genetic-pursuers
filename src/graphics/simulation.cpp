@@ -19,6 +19,7 @@ void Simulation::run(float dt)
 { 
   if (!m_paused) {
     if ((m_counter += dt) >= m_simulation_time) {
+      m_pursuers[0].set_color(sf::Color(255.0f, 255.0f, 0.0f));
       m_counter = 0.0f;
 
       for (std::size_t i=0; i < m_pursuer_size; i++) {
@@ -28,13 +29,6 @@ void Simulation::run(float dt)
       }
 
       m_selector.evaluate();
-      
-      for (std::size_t i=0; i < m_pursuer_size; i++) {
-        if (m_selector.get_genome(i).previous_best)
-          m_pursuers[i].set_color(sf::Color(255.0f, 255.0f, 0.0f));
-        else 
-          m_pursuers[i].set_color(sf::Color(0.0f, 255.0f, 0.0f, 50.0f));
-      }
     }
 
     for (std::size_t i=0; i < m_pursuer_size; i++)
@@ -43,8 +37,11 @@ void Simulation::run(float dt)
 
   m_renderer.clear(sf::Color::Black);
   m_renderer.draw(m_target);
-  for (auto &pursuer : m_pursuers)
-    m_renderer.draw(pursuer);
+
+  for (std::size_t i=1; i < m_pursuer_size; i++)
+      m_renderer.draw(m_pursuers[i]);
+  m_renderer.draw(m_pursuers[0]);
+  
   m_renderer.display();
 }
 
