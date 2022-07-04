@@ -2,6 +2,7 @@
 
 #define PROB_ARRAY_IMPLEMENTATION
 #include "math/prob_array.hpp"
+#include <iostream>
 
   
 Selector::~Selector()

@@ -1,7 +1,7 @@
 #include "graphics/pursuer.hpp"
 
 
-void Pursuer::setup(Vec2f start_pos, sf::Color color, float cooldown)
+void Pursuer::setup(Vec2f start_pos, float cooldown)
 {
   m_start_pos = start_pos;
 
@@ -11,7 +11,7 @@ void Pursuer::setup(Vec2f start_pos, sf::Color color, float cooldown)
   m_shape.setPoint(2, sf::Vector2f( m_radius,  0.0f));
   
   m_shape.setPosition(vec2_sfml(m_pos));
-  m_shape.setFillColor(color);
+  m_shape.setFillColor(sf::Color(150, 150, 140, 90));
 
   m_cooldown = cooldown;
 }
@@ -23,30 +23,55 @@ void Pursuer::set_color(sf::Color color)
 
 void Pursuer::update(float dt, Genome &genome)
 {
-  if ((m_counter += dt) >= m_cooldown) {
-    m_counter = 0.0f;
-    Vec2f acc = genome.next();
-    m_vel += acc;
-  } 
+  if (!m_collided) {
+    m_global_counter += dt;
+    if ((m_counter += dt) >= m_cooldown) {
+      m_counter = 0.0f;
+      Vec2f acc = genome.next();
+      m_vel += acc;
+    } 
 
-  m_pos += m_vel * dt;
-  m_shape.setPosition(vec2_sfml(m_pos));
-  
-  if (m_vel.mag() != 0) 
-    m_shape.setRotation(rad_degrees(m_vel.angle()));
+    m_pos += m_vel * dt;
+    m_shape.setPosition(vec2_sfml(m_pos));
+
+    if (m_vel.mag() != 0) 
+      m_shape.setRotation(rad_degrees(m_vel.angle()));
+  }
 }
 
 void Pursuer::reset()
 {
   m_pos = m_start_pos;
   m_vel = Vec2f(0.0f, 0.0f);
+  m_global_counter = 0.0f;
+  m_collided = false;
   m_shape.setPosition(vec2_sfml(m_pos));
   m_shape.setRotation(90);
+  m_shape.setFillColor(sf::Color(150, 150, 140, 90));
+}
+
+void Pursuer::collided(const Target &target, bool is_best)
+{
+  if (Vec2f::dist(target.get_pos(), m_pos) < target.get_radius()) {
+    m_collided = true;
+    if (!is_best)
+      m_shape.setFillColor(sf::Color(42, 157, 143, 90));
+  }
+}
+
+bool Pursuer::has_collided() const
+{
+  return m_collided;
 }
 
 const Vec2f& Pursuer::get_pos() const
 {
   return m_pos;
+}
+
+float Pursuer::get_global_counter() const
+{
+  return m_global_counter;
 }
 
 void Pursuer::draw(sf::RenderTarget &target, sf::RenderStates states) const

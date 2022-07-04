@@ -9,7 +9,7 @@ void Simulation::setup()
   
   m_pursuers.resize(m_pursuer_size);
   for (std::size_t i=0; i < m_pursuer_size; i++) {
-    m_pursuers[i].setup(Vec2f(0.0f, -400.0f), sf::Color(42, 157, 143, 90), m_pursuer_cooldown);
+    m_pursuers[i].setup(Vec2f(0.0f, -400.0f), m_pursuer_cooldown);
     m_pursuers[i].reset();
   }
 
@@ -19,20 +19,22 @@ void Simulation::run(float dt)
 { 
   if (!m_paused) {
     if ((m_counter += dt) >= m_simulation_time) {
-      m_pursuers[0].set_color(sf::Color(30, 255, 122));
       m_counter = 0.0f;
 
       for (std::size_t i=0; i < m_pursuer_size; i++) {
         float distance = Vec2f::dist(m_pursuers[i].get_pos(), m_target.get_pos());
+        m_selector.get_genome(i).evaluation = 1 / (std::max(distance * distance, 0.0001f) * m_pursuers[i].get_global_counter());
         m_pursuers[i].reset();
-        m_selector.get_genome(i).evaluation = 1 / std::max(distance * distance, 0.0001f);
       }
 
       m_selector.evaluate();
+      m_pursuers[0].set_color(sf::Color(30, 255, 122));
     }
 
-    for (std::size_t i=0; i < m_pursuer_size; i++)
+    for (std::size_t i=0; i < m_pursuer_size; i++) {
       m_pursuers[i].update(dt, m_selector.get_genome(i));
+      m_pursuers[i].collided(m_target, i == 0);
+    }
   }
 
   m_renderer.clear(sf::Color(20, 22, 33));
