@@ -1,60 +1,77 @@
 #include "genetic/selector.hpp"
 
-#define PROB_ARRAY_IMPLEMENTATION
-#include "math/prob_array.hpp"
-#include <iostream>
-
+  
+Selector::Selector()
+{
+  std::random_device device;
+  m_rng = std::mt19937(device());
+}
   
 Selector::~Selector()
 {
   delete[] m_genomes;
 }
 
-void Selector::setup_shape(std::size_t genomes, std::size_t genes)
+
+void Selector::setup(std::size_t size, std::size_t genes)
 {
-  m_size = genomes;
+  m_size = size;
+  m_genes = genes;
   m_genomes = new Genome[m_size];
 
   for (std::size_t i=0; i < m_size; i++) {
     m_genomes[i].setup(genes);
-    m_genomes[i].randomize(15.0f);
+    m_genomes[i].randomize(m_rng);
   }
 }
 
-Genome& Selector::get_genome(std::size_t index)
+void Selector::select(float mutation_rate, float mutation_mag)
+{
+  std::size_t *frequencies = new std::size_t[m_size];
+
+  double max_fitness = 0.0; 
+  std::size_t best_genome;
+  for (std::size_t i=0; i < m_size; i++) {
+    float fitness = m_genomes[i].get_fitness();
+    if (fitness > max_fitness) {
+      max_fitness = fitness;
+      best_genome = i;
+    }
+  }
+
+  frequencies[0] = std::round(100 * (m_genomes[0].get_fitness() / max_fitness));
+  for (std::size_t i=1; i < m_size; i++) 
+    frequencies[i] = frequencies[i - 1] + std::round(100 * (m_genomes[i].get_fitness() / max_fitness));
+
+  m_genomes[0].copy_from(m_genomes[best_genome]);
+  
+  for (std::size_t i=0; i < m_size; i++) {
+    Genome::cross_over(m_genomes[i], m_get_random_genome(frequencies), m_get_random_genome(frequencies), m_genes, m_rng);
+    Genome::mutate(m_genomes[i], mutation_rate, mutation_mag, m_rng);
+  }
+
+  delete[] frequencies;
+}
+
+
+Genome &Selector::operator[](std::size_t index)
 {
   return m_genomes[index];
 }
 
-void Selector::evaluate()
+const Genome &Selector::operator[](std::size_t index) const
 {
-  ProbArray<std::size_t> pool;
-  pool.create(m_size);
-  
-  // Get maximum genome evaluation.
-  float max_evaluation = 0.0f; 
-  std::size_t best_genome;
-  for (std::size_t i=0; i < m_size; i++)
-    if (m_genomes[i].evaluation > max_evaluation) {
-      max_evaluation = m_genomes[i].evaluation;
-      best_genome = i;
-    }
-  
-  // Push genomes to pool.
-  for (std::size_t i=0; i < m_size; i++) {
-    std::size_t frequency = std::round(100 * (m_genomes[i].evaluation / max_evaluation));
-    pool.push(i, frequency);
-  }
-  
-  // Preserve best genome from previous iteration
-  m_genomes[best_genome].reset();
-  m_genomes[best_genome].previous_best = true;  
-  m_genomes[0] = m_genomes[best_genome];
+  return m_genomes[index];
+}
 
-  // Create new genomes by crossing over their genes and mutating them.
-  for (std::size_t i=1; i < m_size; i++) {
-    m_genomes[i] = Genome::cross_over(m_genomes[pool.get_random()], m_genomes[pool.get_random()]);
-    m_genomes[i].mutate(0.2f, 1.0f);
-  }
+
+const Genome &Selector::m_get_random_genome(std::size_t *frequencies)
+{
+  std::uniform_int_distribution<std::size_t> dist(0, frequencies[m_size - 1]);
+  std::size_t x = dist(m_rng);
+  for (std::size_t i=0; i < m_size; i++)
+    if (x < frequencies[i])
+      return m_genomes[i];
+  return m_genomes[m_size - 1];
 }
 

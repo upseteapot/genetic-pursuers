@@ -1,81 +1,84 @@
 #include "genetic/genome.hpp"
 
 
-void Genome::reset()
+Genome::~Genome()
 {
-  m_index = 0;
+  delete[] m_genes;
 }
+
 
 void Genome::setup(std::size_t size)
 {
-  m_size = size;
-  m_genes.resize(size);
+  m_size  = size;
+  m_genes = new double[m_size];
+  memset(m_genes, '\0', m_size * sizeof(double));
 }
 
-void Genome::randomize(float magnitude)
+void Genome::randomize(std::mt19937 &rng)
 {
-  for (std::size_t i=0; i < m_size; i++) {
-    float angle = rand() * 2.f * 3.14159265f / RAND_MAX;
-    m_genes[i].x = 1.0f;
-    m_genes[i].set_angle(angle);
-    m_genes[i] *= magnitude;
-  }
+  std::uniform_real_distribution<double> dist(-1.0, 1.0);
+  for (std::size_t i=0; i < m_size; i++)
+    m_genes[i] = dist(rng);
 }
 
-void Genome::set(std::size_t index, const Vec2f &gene)
+void Genome::copy_from(const Genome &source)
 {
-  m_genes[index] = gene;
+  memcpy(m_genes, source.data(), m_size * sizeof(double));
 }
 
 
-std::size_t Genome::get_size() const
+std::size_t Genome::size() const
 {
   return m_size;
 }
 
-Vec2f Genome::get(std::size_t index) const
+const double *Genome::data() const
+{
+  return m_genes;
+}
+
+double &Genome::operator[](std::size_t index)
 {
   return m_genes[index];
 }
 
-Vec2f Genome::next()
+double Genome::operator[](std::size_t index) const
 {
-  if (m_index < m_size) {
-    return m_genes[m_index++];
-  } else {
-    std::cout << "[Genome][ERROR] Index out of bounds." << std::endl;
-    return Vec2f(0.0f, 0.0f);
-  }
+  return m_genes[index];
 }
 
 
-Genome Genome::cross_over(const Genome &a, const Genome &b)
+void Genome::set_fitness(double fitness)
 {
-  if (a.get_size() != b.get_size()) {
-    std::cout << "[Genome][ERROR] Could not crossover genes because genome have different sizes." << std::endl;
-    return Genome();
-  }
-  Genome new_genome;
-  new_genome.setup(a.get_size());
-  for (std::size_t i=0; i < a.get_size(); i++) {
-    float random_number = (float)rand() / RAND_MAX;
-    if (random_number < 0.5f)
-      new_genome.set(i, a.get(i));
+  m_fitness = fitness;
+}
+
+double Genome::get_fitness() const
+{
+  return m_fitness;
+}
+
+
+void Genome::cross_over(Genome &source, const Genome& parent_a, const Genome& parent_b, std::size_t size, std::mt19937 &rng)
+{
+  std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+  for (std::size_t i=0; i < size; i++) {
+    float x = dist(rng);
+    if (x < 0.5f)
+      source[i] = parent_a[i];
     else
-      new_genome.set(i, b.get(i));
+      source[i] = parent_b[i];
   }
-  return new_genome;
 }
 
-void Genome::mutate(float magnitude, float probability)
+void Genome::mutate(Genome &source, float rate, float mag, std::mt19937 &rng)
 {
-  for (std::size_t i=0; i < m_size; i++) { 
-    float random_number = (float)rand() / RAND_MAX;
-    if (random_number <= probability) {
-      float delta_x = magnitude * ((2.f * rand() / RAND_MAX) - 1.f);
-      float delta_y = magnitude * ((2.f * rand() / RAND_MAX) - 1.f);
-      set(i, get(i) + Vec2f(delta_x, delta_y));
-    }
+  std::uniform_real_distribution<float> dist0(0.0f, 1.0f);
+  std::uniform_real_distribution<double> dist1(-mag, mag);
+  for (std::size_t i=0; i < source.size(); i++) {
+    float x = dist0(rng);
+    if (x < rate)
+      source[i] = source[i] + dist1(rng);
   }
 }
 

@@ -2,6 +2,8 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include <cmath>
+
 #include <SFML/Graphics.hpp>
 
 #include "graphics/engine.hpp"
@@ -15,9 +17,9 @@ class Simulation : public Engine
   public:
     Simulation() = default;
   private:
-    std::size_t m_pursuer_size = 250;
-    float m_simulation_time = 10.0f;
-    float m_pursuer_cooldown = 0.2f;
+    std::size_t m_pursuer_size = 200;
+    float m_simulation_time = 6.0f;
+    float m_pursuer_cooldown = 0.1f;
     float m_counter = 0.0f;
     bool m_paused = true;
 

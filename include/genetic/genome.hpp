@@ -1,31 +1,31 @@
 #pragma once
-#include <iostream>
 #include <random>
-#include "math/vec2.hpp"
+#include <cstring>
 
 
 class Genome
 {
   public:
-    float evaluation = 0;
-    bool previous_best = false;
-
     Genome() = default;
-    void reset();
-    void setup(std::size_t size);
-    void randomize(float magnitude);
-    void set(std::size_t index, const Vec2f &gene);
-
-    std::size_t get_size() const;
-    Vec2f get(std::size_t index) const;
-    Vec2f next(); 
-   
-    static Genome cross_over(const Genome &a, const Genome &b);
-    void mutate(float magnitude, float probability);
+    ~Genome();
   
+    void setup(std::size_t size);
+    void randomize(std::mt19937 &rng);
+    void copy_from(const Genome &source);
+
+    std::size_t size() const;
+    const double *data() const;
+    double &operator[](std::size_t index);
+    double operator[](std::size_t index) const;
+  
+    void set_fitness(double fitness);
+    double get_fitness() const;
+
+    static void cross_over(Genome &source, const Genome& parent_a, const Genome& parent_b, std::size_t size, std::mt19937 &rng);
+    static void mutate(Genome &source, float rate, float mag, std::mt19937 &rng); 
   private:
-    std::size_t m_index = 0;
-    std::size_t m_size;
-    std::vector<Vec2f> m_genes;
+    double m_fitness = 0.0;
+    std::size_t m_size = 0;
+    double *m_genes;
 };
 

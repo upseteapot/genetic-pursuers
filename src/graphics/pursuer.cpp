@@ -21,14 +21,15 @@ void Pursuer::set_color(sf::Color color)
   m_shape.setFillColor(color);
 }
 
-void Pursuer::update(float dt, Genome &genome)
+void Pursuer::update(float dt, const Genome &genome)
 {
   if (!m_collided) {
     m_global_counter += dt;
     if ((m_counter += dt) >= m_cooldown) {
       m_counter = 0.0f;
-      Vec2f acc = genome.next();
+      Vec2f acc = Vec2f::polar((float)genome[m_index] * 50.0f, (float)genome[m_index+1] * 2.f * 3.14159265f);
       m_vel += acc;
+      m_index += 2;
     } 
 
     m_pos += m_vel * dt;
@@ -41,6 +42,7 @@ void Pursuer::update(float dt, Genome &genome)
 
 void Pursuer::reset()
 {
+  m_index = 0;
   m_pos = m_start_pos;
   m_vel = Vec2f(0.0f, 0.0f);
   m_global_counter = 0.0f;

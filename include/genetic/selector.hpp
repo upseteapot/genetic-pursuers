@@ -1,18 +1,25 @@
 #pragma once
+#include <random>
+#include <vector>
 #include "genetic/genome.hpp"
-#include "math/prob_array.hpp"
 
 
 class Selector
 {
   public:
-    Selector() = default;
+    Selector();
     ~Selector();
-    void setup_shape(std::size_t genomes, std::size_t genes);
-    Genome& get_genome(std::size_t index);
-    void evaluate();
+
+    void setup(std::size_t size, std::size_t genes);
+    void select(float mutation_rate, float mutation_mag);
+
+    Genome &operator[](std::size_t index);
+    const Genome &operator[](std::size_t index) const;
   private:
-    std::size_t m_size;
+    std::mt19937 m_rng;
+    std::size_t m_size, m_genes;
     Genome *m_genomes;
+  
+    const Genome &m_get_random_genome(std::size_t *frequencies);
 };
 
