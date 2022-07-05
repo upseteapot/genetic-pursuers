@@ -26,7 +26,7 @@ class Simulation : public Engine
 
     Target m_target;
     std::vector<Pursuer> m_pursuers;
-    Selector m_selector;
+    genalgo::Selector m_selector;
 
     void setup() override;
     void run(float dt) override;

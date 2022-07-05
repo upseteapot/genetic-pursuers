@@ -4,7 +4,8 @@
 void Simulation::setup()
 {
   m_target.setup(Vec2f(0.0f, 400.0f), sf::Color(250, 100, 80));
-
+  
+  m_selector.set_states(states);
   m_selector.setup(m_pursuer_size, (m_simulation_time / m_pursuer_cooldown) * 2);
   
   m_pursuers.resize(m_pursuer_size);
@@ -27,7 +28,7 @@ void Simulation::run(float dt)
         m_pursuers[i].reset();
       }
 
-      m_selector.select(0.5f, 0.0005f);
+      m_selector.select();
       m_pursuers[0].set_color(sf::Color(30, 255, 122));
     }
 

@@ -21,7 +21,7 @@ void Pursuer::set_color(sf::Color color)
   m_shape.setFillColor(color);
 }
 
-void Pursuer::update(float dt, const Genome &genome)
+void Pursuer::update(float dt, const genalgo::Genome &genome)
 {
   if (!m_collided) {
     m_global_counter += dt;

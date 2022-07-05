@@ -12,7 +12,7 @@ class Pursuer : public sf::Drawable
     Pursuer() = default;
     void setup(Vec2f start_pos, float cooldown);
     void set_color(sf::Color color);
-    void update(float dt, const Genome &genome);
+    void update(float dt, const genalgo::Genome &genome);
     void reset();
     void collided(const Target &target, bool is_best);
     bool has_collided() const;

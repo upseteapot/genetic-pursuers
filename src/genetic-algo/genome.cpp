@@ -1,6 +1,9 @@
 #include "genetic-algo/genome.hpp"
 
 
+using namespace genalgo;
+
+
 Genome::~Genome()
 {
   delete[] m_genes;
@@ -71,9 +74,9 @@ void Genome::cross_over(Genome &source, const Genome& parent_a, const Genome& pa
   }
 }
 
-void Genome::mutate(Genome &source, float rate, float mag, std::mt19937 &rng)
+void Genome::mutate(Genome &source, double rate, double mag, std::mt19937 &rng)
 {
-  std::uniform_real_distribution<float> dist0(0.0f, 1.0f);
+  std::uniform_real_distribution<double> dist0(0.0, 1.0);
   std::uniform_real_distribution<double> dist1(-mag, mag);
   for (std::size_t i=0; i < source.size(); i++) {
     float x = dist0(rng);
