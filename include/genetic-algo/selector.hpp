@@ -1,7 +1,6 @@
 #pragma once
 #include <random>
-#include <vector>
-#include "genetic/genome.hpp"
+#include "genetic-algo/genome.hpp"
 
 
 class Selector
@@ -15,6 +14,7 @@ class Selector
 
     Genome &operator[](std::size_t index);
     const Genome &operator[](std::size_t index) const;
+  
   private:
     std::mt19937 m_rng;
     std::size_t m_size, m_genes;

@@ -9,7 +9,8 @@
 #include "graphics/engine.hpp"
 #include "graphics/pursuer.hpp"
 #include "graphics/target.hpp"
-#include "genetic/selector.hpp"
+
+#include "genetic-algo/selector.hpp"
 
 
 class Simulation : public Engine

@@ -1,4 +1,4 @@
-#include "genetic/genome.hpp"
+#include "genetic-algo/genome.hpp"
 
 
 Genome::~Genome()

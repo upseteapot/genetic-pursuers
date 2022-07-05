@@ -23,6 +23,7 @@ class Genome
 
     static void cross_over(Genome &source, const Genome& parent_a, const Genome& parent_b, std::size_t size, std::mt19937 &rng);
     static void mutate(Genome &source, float rate, float mag, std::mt19937 &rng); 
+  
   private:
     double m_fitness = 0.0;
     std::size_t m_size = 0;

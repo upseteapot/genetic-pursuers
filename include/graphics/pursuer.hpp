@@ -1,8 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "math/vec2.hpp"
-#include "genetic/genome.hpp"
+#include "genetic-algo/genome.hpp"
 #include "graphics/target.hpp"
+
 
 
 class Pursuer : public sf::Drawable

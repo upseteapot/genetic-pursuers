@@ -1,4 +1,4 @@
-#include "genetic/selector.hpp"
+#include "genetic-algo/selector.hpp"
 
   
 Selector::Selector()
