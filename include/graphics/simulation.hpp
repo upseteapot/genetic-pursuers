@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include <ctime>
+#include <string>
 #include <cmath>
 
 #include <SFML/Graphics.hpp>
@@ -17,6 +18,7 @@ class Simulation : public Engine
 {
   public:
     Simulation() = default;
+
   private:
     std::size_t m_pursuer_size = 200;
     float m_simulation_time = 6.0f;
@@ -24,8 +26,12 @@ class Simulation : public Engine
     float m_counter = 0.0f;
     bool m_paused = true;
 
+    sf::Font m_source_sans_pro;
+
     Target m_target;
     std::vector<Pursuer> m_pursuers;
+    sf::Text m_best_fitness;
+
     genalgo::Selector m_selector;
 
     void setup() override;

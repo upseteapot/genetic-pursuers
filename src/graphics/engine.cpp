@@ -14,7 +14,7 @@ void Engine::create(int width, int height, std::string title)
   m_renderer.setFramerateLimit(60);
   m_renderer.setKeyRepeatEnabled(false);
 
-  m_view.setSize({m_size.x, -m_size.y});
+  m_view.setSize({m_size.x, m_size.y});
   m_view.setCenter(sf::Vector2f(0.0f, 0.0f));
   m_renderer.setView(m_view);
 }
@@ -46,7 +46,7 @@ void Engine::handle_event()
       break;
     case sf::Event::Resized:
       m_size = {(float)m_event.size.width, (float)m_event.size.height};
-      m_view.setSize({m_size.x, -m_size.y});
+      m_view.setSize({m_size.x, m_size.y});
       m_renderer.setView(m_view);
       break;
     default:

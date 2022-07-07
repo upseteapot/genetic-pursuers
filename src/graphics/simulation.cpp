@@ -3,13 +3,20 @@
 
 void Simulation::setup()
 {
-  m_target.setup(Vec2f(0.0f, 400.0f), sf::Color(250, 100, 80));
-    
+  m_source_sans_pro.loadFromFile("assets/SourceSansPro-Regular.ttf");
+  m_best_fitness.setFont(m_source_sans_pro);
+  m_best_fitness.setCharacterSize(20);
+  m_best_fitness.setFillColor(sf::Color::White);
+  m_best_fitness.setString("Best fitness: N/A");
+  m_best_fitness.setPosition(-m_size.x / 2.f + 10, -m_size.y / 2.f + 10);
+
+  m_target.setup(Vec2f(0.0f, -400.0f), sf::Color(250, 100, 80));
+  
   m_selector.setup(m_pursuer_size, (m_simulation_time / m_pursuer_cooldown) * 2);
   
   m_pursuers.resize(m_pursuer_size);
   for (std::size_t i=0; i < m_pursuer_size; i++) {
-    m_pursuers[i].setup(Vec2f(0.0f, -400.0f), m_pursuer_cooldown);
+    m_pursuers[i].setup(Vec2f(0.0f, 400.0f), m_pursuer_cooldown);
     m_pursuers[i].reset();
   }
 
@@ -31,6 +38,7 @@ void Simulation::run(float dt)
 
       m_selector.select();
       m_pursuers[0].set_color(sf::Color(30, 255, 122));
+      m_best_fitness.setString("Best fitness: " + std::to_string(m_selector[0].get_fitness()));
     }
 
     for (std::size_t i=0; i < m_pursuer_size; i++) {
@@ -46,6 +54,7 @@ void Simulation::run(float dt)
       m_renderer.draw(m_pursuers[i]);
   m_renderer.draw(m_pursuers[0]);
   m_renderer.draw(m_target);
+  m_renderer.draw(m_best_fitness);
   
   m_renderer.display();
 }
@@ -60,6 +69,10 @@ void Simulation::event()
         default:
           break;
       }
+      break;
+    
+    case sf::Event::Resized:
+      m_best_fitness.setPosition(-m_size.x / 2.f + 10, -m_size.y / 2.f + 10);
       break;
 
     default:

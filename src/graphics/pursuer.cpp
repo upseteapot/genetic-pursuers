@@ -49,7 +49,7 @@ void Pursuer::reset()
   m_collided = false;
   m_is_alive = true;
   m_shape.setPosition(vec2_sfml(m_pos));
-  m_shape.setRotation(90);
+  m_shape.setRotation(-90);
   m_shape.setFillColor(sf::Color(150, 150, 140, 90));
 }
 
