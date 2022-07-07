@@ -15,13 +15,15 @@ class Pursuer : public sf::Drawable
     void update(float dt, const genalgo::Genome &genome);
     void reset();
     void collided(const Target &target, bool is_best);
-    bool has_collided() const;
+    void check_bounds(sf::Vector2f size, bool is_best);
+    bool is_alive() const;
     const Vec2f& get_pos() const;
     float get_global_counter() const;
   private:
     std::size_t m_index = 0;
     float m_global_counter = 0.0f;
     bool m_collided = false;
+    bool m_is_alive = true;
     float m_cooldown;
     float m_counter = 0.0f;
     float m_radius = 15.0f;

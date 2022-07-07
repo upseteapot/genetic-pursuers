@@ -4,8 +4,7 @@
 void Simulation::setup()
 {
   m_target.setup(Vec2f(0.0f, 400.0f), sf::Color(250, 100, 80));
-  
-  m_selector.set_states(states);
+    
   m_selector.setup(m_pursuer_size, (m_simulation_time / m_pursuer_cooldown) * 2);
   
   m_pursuers.resize(m_pursuer_size);
@@ -25,6 +24,8 @@ void Simulation::run(float dt)
       for (std::size_t i=0; i < m_pursuer_size; i++) {
         float distance = Vec2f::dist(m_pursuers[i].get_pos(), m_target.get_pos());
         m_selector[i].set_fitness(1 / (std::max((float)pow(distance, 2), 0.0001f) * pow(m_pursuers[i].get_global_counter(), 2)));
+        if (!m_pursuers[i].is_alive())
+          m_selector[i].set_fitness(m_selector[i].get_fitness() / 10.0f);  
         m_pursuers[i].reset();
       }
 
@@ -34,6 +35,7 @@ void Simulation::run(float dt)
 
     for (std::size_t i=0; i < m_pursuer_size; i++) {
       m_pursuers[i].update(dt, m_selector[i]);
+      m_pursuers[i].check_bounds(m_size, i == 0);
       m_pursuers[i].collided(m_target, i == 0);
     }
   }
