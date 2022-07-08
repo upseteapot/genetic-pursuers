@@ -10,6 +10,7 @@
 #include "graphics/engine.hpp"
 #include "graphics/pursuer.hpp"
 #include "graphics/target.hpp"
+#include "graphics/obstacle.hpp"
 
 #include "genetic-algo/selector.hpp"
 
@@ -25,12 +26,16 @@ class Simulation : public Engine
     float m_pursuer_cooldown = 0.1f;
     float m_counter = 0.0f;
     bool m_paused = true;
+    bool m_creating = false;
 
     sf::Font m_source_sans_pro;
 
     Target m_target;
     std::vector<Pursuer> m_pursuers;
     sf::Text m_best_fitness;
+   
+    Obstacle m_selected_obstacle;
+    std::vector<Obstacle> m_obstacles;
 
     genalgo::Selector m_selector;
 

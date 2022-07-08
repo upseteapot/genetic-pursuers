@@ -23,7 +23,7 @@ void Pursuer::set_color(sf::Color color)
 
 void Pursuer::update(float dt, const genalgo::Genome &genome)
 {
-  if (!m_collided && m_is_alive) {
+  if (!m_has_reached_target && m_is_alive) {
     m_global_counter += dt;
     if ((m_counter += dt) >= m_cooldown) {
       m_counter = 0.0f;
@@ -46,26 +46,33 @@ void Pursuer::reset()
   m_pos = m_start_pos;
   m_vel = Vec2f(0.0f, 0.0f);
   m_global_counter = 0.0f;
-  m_collided = false;
+  m_has_reached_target = false;
   m_is_alive = true;
   m_shape.setPosition(vec2_sfml(m_pos));
   m_shape.setRotation(-90);
   m_shape.setFillColor(sf::Color(150, 150, 140, 90));
 }
 
-void Pursuer::collided(const Target &target, bool is_best)
+void Pursuer::reach_target(const Target &target, bool is_best)
 {
   if (Vec2f::dist(target.get_pos(), m_pos) < target.get_radius()) {
-    m_collided = true;
+    m_has_reached_target = true;
     if (!is_best)
       m_shape.setFillColor(sf::Color(42, 157, 143, 90));
   }
 }
 
+void Pursuer::collided(sf::FloatRect bounds, bool is_best)
+{
+  m_is_alive = m_is_alive && !bounds.contains(vec2_sfml(m_pos));
+  if (!m_is_alive && !is_best)
+      m_shape.setFillColor(sf::Color(42, 157, 143, 90));
+}
+
 void Pursuer::check_bounds(sf::Vector2f size, bool is_best)
 {
-  m_is_alive = -size.x / 2.f < m_pos.x && m_pos.x < size.x / 2.f &&
-               -size.y / 2.f < m_pos.y && m_pos.y < size.y / 2.f;
+  m_is_alive = m_is_alive && -size.x / 2.f < m_pos.x && m_pos.x < size.x / 2.f &&
+                             -size.y / 2.f < m_pos.y && m_pos.y < size.y / 2.f;
   if (!m_is_alive && !is_best)
       m_shape.setFillColor(sf::Color(42, 157, 143, 90));
 }
@@ -73,6 +80,11 @@ void Pursuer::check_bounds(sf::Vector2f size, bool is_best)
 bool Pursuer::is_alive() const
 {
   return m_is_alive;
+}
+
+bool Pursuer::has_reached_target() const
+{
+  return m_has_reached_target;
 }
 
 const Vec2f& Pursuer::get_pos() const
